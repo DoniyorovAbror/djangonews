@@ -1,0 +1,33 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+{% block title %}
+    Посты   
+{% endblock title %}
+
+{% block content %}
+<h2>Все новости</h2>
+    {% if news %}
+        <p class='text-start'>количество новостей - {{ news| length}}</p>
+        <table class='table'>
+            <thead>
+                <tr>
+                    <th scope='col'>Заголовок</th>
+                    <th scope='col'>дата публикации</th>
+                    <th scope='col'>контент</th>
+                </tr>
+            </thead>
+            {% for item in news %}
+            <tbody>
+                <tr>
+                    <td>{{ item.title|censor }}</td>
+                    <td>{{ item.dateCreation|date:'d.M.Y' }}</td>
+                    <td>{{ item.text|truncatechars:20|censor}}</td>
+                </tr>
+            </tbody>
+            {% endfor %}
+
+        </table>
+    {% else %}
+        <h2>Нет новостей</h2>
+    {% endif %}
+{% endblock content %}

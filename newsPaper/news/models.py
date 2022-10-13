@@ -26,7 +26,7 @@ class Post(models.Model):
     NEWS = 'NW'
     ARTICLE = 'AR'
     CATEGORY_CHOICES = (
-        (NEWS, 'Новрсти'),
+        (NEWS, 'Новости'),
         (ARTICLE, 'Статья'),
     )
     categoryType = models.CharField(max_length=2, choices=CATEGORY_CHOICES, default=ARTICLE)
@@ -46,6 +46,9 @@ class Post(models.Model):
     
     def preview(self):
         return self.text[0:128] + '...'
+    
+    def __str__(self):
+        return self.title
 
 
 class PostCategory(models.Model):
