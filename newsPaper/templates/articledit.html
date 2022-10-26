@@ -1,0 +1,13 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+    Редоктировать статью
+{% endblock title %}
+{% block content %}
+    <form action="" method="post">
+    {% csrf_token %}
+            {{ form.as_p }}
+        <input type="submit" value="Сохранить">
+        <a class="btn btn-primary" href="{{ 'delete' }}" role="button">Удалить</a>
+    </form>
+{% endblock content %}

@@ -4,6 +4,7 @@ from news.censorwords import CENSOR
 
 register = template.Library()
 
+
 @register.filter()
 def censor(value: str):
     censored = ''

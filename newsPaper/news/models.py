@@ -14,11 +14,28 @@ class Author(models.Model):
         cpRate = Comment.objects.filter(commentThrough__in=Post.objects.filter(author=self.pk)).values_list('rating', flat=True).aggregate(Sum('rating'))
         self.ratingAuthor = postRate['rating__sum'] * 3 + commentRate['rating__sum'] + cpRate['rating__sum']
         self.save()
+        
+    def __str__(self):
+        return f'{self.authorUser}'
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=64, unique=True)
-
+    sport = 'SP'
+    politics = 'PO'
+    education = 'ED'
+    cinema = 'CI'
+    information = 'IT'
+    CATS = [(sport, 'Спорт'),
+            (politics, 'Политика'),
+            (education, 'Образование'),
+            (cinema, 'Кино'),
+            (information, 'Сфера IT')
+            ]
+    name = models.CharField(max_length = 2, choices = CATS, default = sport, unique = True)
+    
+    def __str__(self):
+        return f'{self.get_name_display()}'
+    
 
 class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)

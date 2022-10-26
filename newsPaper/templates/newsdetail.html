@@ -1,7 +1,7 @@
 {% extends "flatpages/default.html" %}
 {% load custom_filters %}
 {% block title %}
-    Новости {{ anews.id }}
+{{ anews.get_categoryType_display }}
 {% endblock title %}
 
 {% block content %}
@@ -16,4 +16,9 @@
             </blockquote>
         </div>
     </div>
+    {% if anews.categoryType == 'NW' %}
+            <a class="btn btn-primary mt-2" href="news/{{ anews.id }}/edit" role="button">Редактировать</a>
+        {% elif anews.categoryType == 'AR'%}
+            <a class="btn btn-primary mt-2" href="article/{{ anews.id }}/edit" role="button">Редактировать</a>
+    {% endif %}
 {% endblock content %}
