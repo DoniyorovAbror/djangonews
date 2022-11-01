@@ -1,0 +1,22 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+    {% if 'news/create' in request.path %}
+        Создать новость
+    {% elif 'article/create' in request.path %}
+        Создать статью
+    {% else %}
+        {{ object.get_categoryType_display }}
+    {% endif %}
+
+{% endblock title %}
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+            {{ form.as_p }}
+        <input class="btn btn-success" type="submit" value="Сохранить">
+        {% if 'create' not in request.path  %}
+            <a class="btn btn-danger" href="{{ 'delete' }}" role="button">Удалить</a>
+        {% endif %}
+    </form>
+{% endblock content %}
