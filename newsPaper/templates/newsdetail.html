@@ -12,13 +12,19 @@
         <div class="card-body">
             <blockquote class="blockquote mb-0">
                 <p> {{ anews.text|censor }} </p>
+                <p class='text-start fs-6'>{{ anews.author }}</p>
                 <p class='text-start fs-6'> {{ anews.dateCreation|date:'d.M.Y' }} </p>
             </blockquote>
         </div>
     </div>
-    {% if anews.categoryType == 'NW' %}
-            <a class="btn btn-primary mt-2" href="news/{{ anews.id }}/edit" role="button">Редактировать</a>
-        {% elif anews.categoryType == 'AR'%}
-            <a class="btn btn-primary mt-2" href="article/{{ anews.id }}/edit" role="button">Редактировать</a>
+    {% if perms.news.change_post %}
+        {% if same_post_author == request.user.id %}
+            {% if anews.categoryType == 'NW' %}
+                    <a class="btn btn-primary mt-2" href="news/{{ anews.id }}/edit" role="button">Редактировать</a>
+                {% elif anews.categoryType == 'AR'%}
+                    <a class="btn btn-primary mt-2" href="article/{{ anews.id }}/edit" role="button">Редактировать</a>
+            {% endif %}
+        {% endif %}
     {% endif %}
+    <a href="{{request.META.HTTP_REFERER|escape}}" class="btn btn-success mt-2 w-40"> Назад </a>
 {% endblock content %}

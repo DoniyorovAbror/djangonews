@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .filters import PostFilter
@@ -28,8 +29,14 @@ class DetailNews(DetailView):
     template_name = 'newsdetail.html'
     context_object_name = "anews"
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['same_post_author'] = self.get_object().author.authorUser.id
+        return context
     
-class CreateNews(CreateView):
+    
+class CreateNews(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post')
     model = Post
     template_name = 'editnews.html'
     form_class = NewsForm
@@ -41,7 +48,8 @@ class CreateNews(CreateView):
         return super().form_valid(form)
 
 
-class CreateArticle(CreateView):
+class CreateArticle(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post',)
     model = Post
     template_name = 'editnews.html'
     form_class = ArticleForm
@@ -53,14 +61,16 @@ class CreateArticle(CreateView):
         return super().form_valid(form)
     
     
-class UpdateNews(UpdateView):
+class UpdateNews(PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post',)
     model = Post
     template_name = 'editnews.html'
     form_class = NewsForm
     success_url = reverse_lazy('post_list')
 
 
-class DeleteNews(DeleteView):
+class DeleteNews(PermissionRequiredMixin, DeleteView):
+    permission_required = ('news.delete_post',)
     model = Post
     template_name = 'newsdelete.html'
     success_url = reverse_lazy('post_list')

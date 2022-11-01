@@ -1,0 +1,10 @@
+{% extends 'flatpages/default.html' %}
+{% load socialaccount %}
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="submit" value="login">
+        <input type="hidden" name="next" value='{{ next }}'>
+    </form>
+    {{ next }}
+{% endblock content %}
