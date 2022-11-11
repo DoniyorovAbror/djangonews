@@ -11,4 +11,7 @@ urlpatterns = [
     path('news/<int:pk>/delete', DeleteNews.as_view(), name='news_delete'),
     path('article/<int:pk>/edit', UpdateNews.as_view(), name='article_edit'),
     path('article/<int:pk>/delete', DeleteNews.as_view(), name='article_delete'),
+    path('subscribe/<int:pk>', subscribe, name='subscribe'),
+    path('unsubscribe/<int:pk>', unsubscribe, name='unsubscribe'),
 ]
+

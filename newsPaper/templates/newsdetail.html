@@ -14,6 +14,16 @@
                 <p> {{ anews.text|censor }} </p>
                 <p class='text-start fs-6'>{{ anews.author }}</p>
                 <p class='text-start fs-6'> {{ anews.dateCreation|date:'d.M.Y' }} </p>
+                {% for cat in anews.postCategory.all %}
+                    {% if cat in is_subscribed %}
+                        <p>{{ cat.name }}: <a href="{% url 'unsubscribe' cat.id %}">Отписаться</a> </p>
+                {% else %}
+                        <p>{{ cat.name }}: <a href="{% url 'subscribe' cat.id %}">Подписаться</a> </p>
+
+                    {% endif %}
+                {% endfor %}
+
+
             </blockquote>
         </div>
     </div>

@@ -1,9 +1,12 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+import datetime
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .filters import PostFilter
 from .forms import ArticleForm, NewsForm
-from .models import Post
+from .models import Post, Category, User
 
 
 class ListNews(ListView):
@@ -21,6 +24,10 @@ class ListNews(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
+        if self.request.user in User.objects.all():
+            today = datetime.datetime.now()
+            today = today.replace(hour=0, minute=0, second=0)
+            context['author_post'] = Post.objects.filter(author__authorUser=self.request.user).filter(dateCreation__gte=today).count
         return context
 
 
@@ -32,8 +39,23 @@ class DetailNews(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['same_post_author'] = self.get_object().author.authorUser.id
+        context['is_subscribed'] = Category.objects.filter(subscribers=self.request.user.id)
         return context
+
     
+@login_required
+def subscribe(request, *args, **kwargs):
+    Category.objects.get(pk=int(kwargs['pk'])).subscribers.add(request.user.id)
+    
+    return redirect('/')
+
+
+@login_required
+def unsubscribe(request, *args, **kwargs):
+    Category.objects.get(pk=int(kwargs['pk'])).subscribers.remove(request.user.id)
+    
+    return redirect('/')
+
     
 class CreateNews(PermissionRequiredMixin, CreateView):
     permission_required = ('news.add_post')
@@ -41,6 +63,12 @@ class CreateNews(PermissionRequiredMixin, CreateView):
     template_name = 'editnews.html'
     form_class = NewsForm
     success_url = reverse_lazy('post_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post_type'] = Post.CATEGORY_CHOICES
+        context['categories'] = Category.objects.all
+        return context
     
     def form_valid(self, form):
         post = form.save(commit=False)

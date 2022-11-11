@@ -32,6 +32,7 @@ class Category(models.Model):
             (information, 'Сфера IT')
             ]
     name = models.CharField(max_length = 2, choices = CATS, default = sport, unique = True)
+    subscribers = models.ManyToManyField(User)
     
     def __str__(self):
         return f'{self.get_name_display()}'
@@ -66,6 +67,9 @@ class Post(models.Model):
     
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return f'{self.id}'
 
 
 class PostCategory(models.Model):

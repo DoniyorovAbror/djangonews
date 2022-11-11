@@ -8,15 +8,26 @@
 {% block content %}
     {% if 'search' in request.path %}
         <h2 class="mb-3">Фильтрация</h2>
-        <form action="" method="get">
-        {{ filterset.form.as_table }}
-            <br>
-        <input type="submit" class="btn btn-dark btn-md mt-3" value="Найти"/>
-        </form>
-        {% else %}
+            <form action="" method="get">
+            {{ filterset.form.as_table }}
+                <br>
+            <input type="submit" class="btn btn-dark btn-md mt-3" value="Найти"/>
+            </form>
+            {% else %}
         <h2 class="mb-3">Все новости</h2>
+            {% if perms.news.add_post %}
+                <p class="bg-light text-dark p-2 mb-2 mt-2 me-2 text-center">За сегондня вы создали постов: {{ author_post }}</p>
+                    {% if author_post >= 3%}
+                         <a href="{% url 'news_create' %}" class="btn btn-dark btn-sm m-1 ms-1 disabled" tabindex="-1" role="button" aria-disabled="true"> Создать Новость </a>
+                         <a href="{% url 'article_create' %}" class="btn btn-dark btn-sm m-1 ms-1 disabled" tabindex="-1" role="button" aria-disabled="true"> Создать Статью </a>
+                    {% else %}
+                          <a href="{% url 'news_create' %}" class="btn btn-dark btn-sm m-1" tabindex="-1" role="button" aria-disabled="true"> Создать Новость </a>
+                          <a href="{% url 'article_create' %}" class="btn btn-dark btn-sm m-1" tabindex="-1" role="button" aria-disabled="true"> Создать Статью </a>
+                    
+                    {% endif %} 
+            {% endif %} 
     {% endif %}
-    <p class='text-start'>количество новостей - {{ news| length}}</p>
+    <p class='text-start'>количество новостей - {{ news|length}}</p>
     {% if news %}
         <table class='table'>
             <thead>
@@ -36,7 +47,7 @@
                     <td>{{ item.get_categoryType_display }}</td>
                     <td>{{ item.dateCreation|date:'d.M.Y' }}</td>
                     <td>{{ item.text|truncatechars:20|censor}}</td>
-                    <td><a class="btn btn-primary" href="/news/{{ item.id }}" role="button">Далее...</a></td>
+                    <td><a class="btn btn-primary" href="{% url 'post_detail' item.id %}" role="button">Далее...</a></td>
                 </tr>
             </tbody>
             {% endfor %}
