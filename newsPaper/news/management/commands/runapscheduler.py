@@ -16,31 +16,32 @@ logger = logging.getLogger(__name__)
 
 
 def my_job():
-    today = datetime.datetime.now()
-    last_week = today - datetime.timedelta(days=7)
-    posts = Post.objects.filter(dateCreation__gte=last_week).order_by('-dateCreation')
-    categories = set(posts.values_list('postCategory__name', flat=True))
-    subscribers = set(
-        Category.objects.filter(name__in=categories).values_list('subscribers__email', flat=True))
-    username = set(
-        Category.objects.filter(name__in=categories).values_list('subscribers__username', flat=True))
-    
-    html_content = render_to_string(
-        template_name='subscribers_email_notify_weekly.html',
-        context={
-            'posts': posts,
-            'posts_link': settings.SITE_URL,
-            'username': username,
-        }
-    )
-    msg = EmailMultiAlternatives(
-        subject='Посты за неделю',
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        to=subscribers,
-    )
-    
-    msg.attach_alternative(html_content, 'text/html')
-    msg.send()
+    pass
+    # today = datetime.datetime.now()
+    # last_week = today - datetime.timedelta(days=7)
+    # posts = Post.objects.filter(dateCreation__gte=last_week).order_by('-dateCreation')
+    # categories = set(posts.values_list('postCategory__name', flat=True))
+    # subscribers = set(
+    #     Category.objects.filter(name__in=categories).values_list('subscribers__email', flat=True))
+    # username = set(
+    #     Category.objects.filter(name__in=categories).values_list('subscribers__username', flat=True))
+    #
+    # html_content = render_to_string(
+    #     template_name='subscribers_email_notify_weekly.html',
+    #     context={
+    #         'posts': posts,
+    #         'posts_link': settings.SITE_URL,
+    #         'username': username,
+    #     }
+    # )
+    # msg = EmailMultiAlternatives(
+    #     subject='Посты за неделю',
+    #     from_email=settings.DEFAULT_FROM_EMAIL,
+    #     to=subscribers,
+    # )
+    #
+    # msg.attach_alternative(html_content, 'text/html')
+    # msg.send()
 
 
 # The `close_old_connections` decorator ensures that database connections, that have become

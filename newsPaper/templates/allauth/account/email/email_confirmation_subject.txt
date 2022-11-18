@@ -1,4 +1,4 @@
 {% load i18n %}
 {% autoescape off %}
-{% blocktrans %}Skillfactory sends it's regards {% endblocktrans %}
+{% blocktrans %} Skillfactory sends it's regards {% endblocktrans %}
 {% endautoescape %}

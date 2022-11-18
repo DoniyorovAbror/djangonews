@@ -17,6 +17,10 @@ class Author(models.Model):
         
     def __str__(self):
         return f'{self.authorUser}'
+    
+    class Meta:
+        verbose_name = 'Автор'
+        verbose_name_plural = 'Авторы'
 
 
 class Category(models.Model):
@@ -36,6 +40,10 @@ class Category(models.Model):
     
     def __str__(self):
         return f'{self.get_name_display()}'
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
     
 
 class Post(models.Model):
@@ -70,6 +78,10 @@ class Post(models.Model):
     
     def get_absolute_url(self):
         return f'{self.id}'
+    
+    class Meta:
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
 
 
 class PostCategory(models.Model):

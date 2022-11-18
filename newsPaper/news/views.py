@@ -1,14 +1,23 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
-import datetime
+from datetime import datetime
+
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .filters import PostFilter
 from .forms import ArticleForm, NewsForm
 from .models import Post, Category, User
+from .tasks import notify_subscribers
 
 
+# class IndexView(View):
+#     def get(self, request):
+#         printer.apply_async([10], eta=datetime.now() + timedelta(seconds=5))
+#         hello.delay()
+#         return HttpResponse('Hello!')
+    
+    
 class ListNews(ListView):
     model = Post
     ordering = '-dateCreation'
@@ -25,11 +34,11 @@ class ListNews(ListView):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
         if self.request.user in User.objects.all():
-            today = datetime.datetime.now()
+            today = datetime.now()
             today = today.replace(hour=0, minute=0, second=0)
             context['author_post'] = Post.objects.filter(author__authorUser=self.request.user).filter(dateCreation__gte=today).count
         return context
-
+    
 
 class DetailNews(DetailView):
     model = Post
@@ -73,6 +82,8 @@ class CreateNews(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.categoryType = Post.NEWS
+        post.save()
+        notify_subscribers.apply_async([post.pk], countdown = 60)
         return super().form_valid(form)
 
 
@@ -86,6 +97,8 @@ class CreateArticle(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.categoryType = Post.ARTICLE
+        post.save()
+        notify_subscribers.apply_async([post.pk], countdown=60)
         return super().form_valid(form)
     
     
