@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-
+from django.core.cache import cache
 from django.db.models import Sum
 
 
@@ -79,10 +79,14 @@ class Post(models.Model):
     def get_absolute_url(self):
         return f'{self.id}'
     
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.delete(f'product-{self.pk}')
+    
     class Meta:
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
-
+        
 
 class PostCategory(models.Model):
     postThrough = models.ForeignKey(Post, on_delete=models.CASCADE)

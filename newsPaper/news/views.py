@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from datetime import datetime
-
+from django.core.cache import cache
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -10,7 +10,7 @@ from .forms import ArticleForm, NewsForm
 from .models import Post, Category, User
 from .tasks import notify_subscribers
 
-
+#
 # class IndexView(View):
 #     def get(self, request):
 #         printer.apply_async([10], eta=datetime.now() + timedelta(seconds=5))
@@ -50,8 +50,15 @@ class DetailNews(DetailView):
         context['same_post_author'] = self.get_object().author.authorUser.id
         context['is_subscribed'] = Category.objects.filter(subscribers=self.request.user.id)
         return context
-
     
+    def get_object(self, queryset=None):
+        obj = cache.get(f'Product={self.kwargs["pk"]}', None)
+        if not obj:
+            obj = super().get_object(queryset=queryset)
+            cache.set(f'product={self.kwargs["pk"]}', obj)
+        return obj
+        
+
 @login_required
 def subscribe(request, *args, **kwargs):
     Category.objects.get(pk=int(kwargs['pk'])).subscribers.add(request.user.id)
