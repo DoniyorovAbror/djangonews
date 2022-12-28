@@ -189,8 +189,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'news_db',
-        'USER': 'postgres',
-        'PASSWORD': '123',
+        'USER': os.getenv('USER_DB'),
+        'PASSWORD': os.getenv('PASS_DB'),
         'HOST': 'localhost',
         'PORT': '5432',
     },
